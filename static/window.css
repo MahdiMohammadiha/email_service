@@ -1,0 +1,9 @@
+@media only screen and (max-width: 240px) {
+    * {
+        visibility: hidden;
+    }
+
+    body {
+        background-color: gray;
+    }
+}

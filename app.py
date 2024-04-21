@@ -21,7 +21,7 @@ def signup():
 
         try:
             if not (username and password):
-                raise "Both Username and Ppassword must have value."
+                raise "Both Username and Password are required."
             users.insert_one({
                 "username": username,
                 "password": password
@@ -35,3 +35,16 @@ def signup():
     
     # all_users = users.find()
     return render_template("signup.html")
+
+@app.route("/signin/", methods=['GET', 'POST'])
+def signin():
+    if request.method == 'POST':
+
+        username = request.form['username']
+        password = request.form['password']
+        
+        user = users.find_one({"username":username})
+        if user["password"]==password:
+            return redirect(url_for("index"))
+
+    return render_template("signin.html")

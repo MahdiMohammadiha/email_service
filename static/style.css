@@ -10,7 +10,7 @@ body {
     align-items: center;
 }
 
-.content, .head-label {
+.content, .head-label, .head-links {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -24,4 +24,9 @@ body {
 
 .head-label {
     align-items: center;
+}
+
+.head-links {
+    flex-direction: row;
+    justify-content: space-around;
 }
