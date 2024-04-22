@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect, session, make_response
+from flask import Flask, render_template, url_for, request, redirect
 from pymongo import MongoClient
 from logging import getLogger, ERROR
 from os import urandom
@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.secret_key = urandom(24)
 
 log = getLogger("werkzeug")
-# log.setLevel(ERROR)
+log.setLevel(ERROR)
 
 client = MongoClient("localhost", 27017)
 db = client.email_service
@@ -25,6 +25,9 @@ def index():
 
 @app.route("/signup/", methods=["GET", "POST"])
 def signup():
+    if request.cookies.get("username"):
+        return redirect(url_for("index"))
+
     if request.method == "POST":
         signup_status = [False, "Not proceed."]
 
@@ -54,6 +57,9 @@ def signup():
 
 @app.route("/signin/", methods=["GET", "POST"])
 def signin():
+    if request.cookies.get("username"):
+        return redirect(url_for("index"))
+
     if request.method == "POST":
 
         username = request.form["username"]
@@ -62,10 +68,20 @@ def signin():
 
         if user and (user["password"] == password):
             response = redirect(url_for("index"))
-            response.set_cookie('username', username, max_age=86400)
+            response.set_cookie("username", username, max_age=7200)
             return response
 
     return render_template("signin.html")
+
+
+@app.route("/signout/")
+def signout():
+    if not request.cookies.get("username"):
+        return redirect(url_for("index"))
+
+    response = redirect(url_for("index"))
+    response.set_cookie("username", "", expires=0)
+    return response
 
 
 @app.route("/@")

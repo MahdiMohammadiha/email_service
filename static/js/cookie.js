@@ -8,12 +8,3 @@ function getCookie(looking_for) {
     }
     return false
 }
-
-// document.getElementById
-
-// if 
-
-// if (!getCookie("is_light")) {
-//     alert("did it!")
-//     document.cookie = "is_light=yes;path=/";
-// }
