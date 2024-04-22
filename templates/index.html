@@ -1,33 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Index</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='window.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/window.css')}}">
+    <script src="{{url_for('static', filename='js/cookie.js')}}"></script>
 </head>
+
 <body>
-    <div class="head-label">Index</div>
-    <div class="head-links">
-        <p>
-            <a href="/">Index</a>
-        </p>
-        <p>
-            <a href="/signup/">Signup</a>
-        </p>
-        <p>
-            <a href="/signin/">Signin</a>
-        </p>
+    <div class="head-status">
+        <div class="head-label">
+            <p>
+                <b>
+                    Index
+                </b>
+            </p>
+        </div>
+        <div id="head-info" class="head-info">
+            <p>
+                <b>
+                    Hello {{ username }}
+                </b>
+            </p>
+        </div>
     </div>
+    {% include "links.html" %}
     <div class="content">
         <h1>
             Email service
         </h1>
         <p>
-            A simple email service built with Flask and MongoDB. Easily send and view emails using a lightweight Flask application backed by MongoDB for storage. Perfect for small-scale email handling needs or as a starting point for larger projects.
+            A simple email service built with Flask and MongoDB. Easily send and view emails using a lightweight Flask
+            application backed by MongoDB for storage. Perfect for small-scale email handling needs or as a starting
+            point for larger projects.
         </p>
         <hr>
     </div>
 </body>
+
 </html>

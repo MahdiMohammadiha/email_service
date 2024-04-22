@@ -1,25 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='window.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/window.css')}}">
+    <script src="{{url_for('static', filename='js/cookie.js')}}"></script>
 </head>
+
 <body>
-    <div class="head-label">Signup</div>
-    <div class="head-links">
-        <p>
-            <a href="/">Index</a>
-        </p>
-        <p>
-            <a href="/signup/">Signup</a>
-        </p>
-        <p>
-            <a href="/signin">Signin</a>
-        </p>
+    <div class="head-status">
+        <b>
+            Signup
+        </b>
     </div>
+    {% include "links.html" %}
     <div class="content">
         <form method="post">
             <p>
@@ -28,8 +25,12 @@
             <p>
                 <input type="text" name="password" id="password" placeholder="Enter password">
             </p>
+            <p>
+                <input type="text" name="email" id="email" placeholder="Enter email">
+            </p>
             <button type="submit">Signup</button>
         </form>
     </div>
 </body>
+
 </html>
