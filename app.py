@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect, session
+from flask import Flask, render_template, url_for, request, redirect, session, make_response
 from pymongo import MongoClient
 from logging import getLogger, ERROR
 from os import urandom
@@ -7,20 +7,18 @@ app = Flask(__name__)
 app.secret_key = urandom(24)
 
 log = getLogger("werkzeug")
-log.setLevel(ERROR)
+# log.setLevel(ERROR)
 
 client = MongoClient("localhost", 27017)
 db = client.email_service
 users = db.users
 
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def index():
-    signup_status = session.pop("signup_status", None)
-
-    username = "Guest"
-    if (signup_status is not None) and (signup_status[0]):
-        username = signup_status[1]
+    username = request.cookies.get("username")
+    if not username:
+        username = "Guest"
 
     return render_template("index.html", username=username)
 
@@ -48,12 +46,8 @@ def signup():
             except Exception as error:
                 signup_status = [False, type(error).__name__]
 
-        session["signup_status"] = signup_status
-
-        print(str(signup_status))
-
         if signup_status[0]:
-            return redirect(url_for("index"))
+            return redirect(url_for("signin"))
 
     return render_template("signup.html")
 
@@ -66,12 +60,18 @@ def signin():
         password = request.form["password"]
         user = users.find_one({"username": username})
 
-        if user["password"] == password:
-            return redirect(url_for("index"))
+        if user and (user["password"] == password):
+            response = redirect(url_for("index"))
+            response.set_cookie('username', username, max_age=86400)
+            return response
 
     return render_template("signin.html")
 
 
 @app.route("/@")
 def a_a():
-    return "@_@\n\tThere is nothing here, go away."
+    return "@_@<br>There is nothing here, go away."
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
