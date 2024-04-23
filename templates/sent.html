@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sent</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/window.css')}}">
+    <script src="{{url_for('static', filename='js/cookie.js')}}"></script>
+</head>
+
+<body>
+    <div class="head-status">
+        <div class="head-label">
+            <p>
+                <b>
+                    Sent
+                </b>
+            </p>
+        </div>
+        <div id="head-info" class="head-info">
+            <p>
+                <b>
+                    Hello {{ username }}
+                </b>
+            </p>
+        </div>
+    </div>
+    {% include "links.html" %}
+    <div class="content">
+        <h3>
+            Sent emails:
+        </h3>
+        <table>
+            <tr>
+                <th>Index</th>
+                <th>To</th>
+                <th>Subject</th>
+                <th>Date</th>
+                <th>Body</th>
+            </tr>
+            {% for row in data %}
+            <tr>
+                <td>{{ row.index }}</td>
+                <td>{{ row.to }}</td>
+                <td>{{ row.subject }}</td>
+                <td>{{ row.date }}</td>
+                <td>{{ row.body }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+
+</html>
