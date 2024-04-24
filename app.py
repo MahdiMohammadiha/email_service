@@ -28,18 +28,19 @@ def signup():
     if request.cookies.get("username"):
         return redirect(url_for("index"))
 
-    if request.method == "POST":
-        signup_status = [False, "Not proceed."]
+    signup_status = [False, "Not proceed."]
 
+    if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
         email = request.form["email"]
-        user = users.find_one({"username": username})
 
         if not (username and password):
             signup_status = [False, "Both Username, Password and Email are required."]
-        elif user:
+        elif users.find_one({"username": username}):
             signup_status = [False, "Username already taken."]
+        elif users.find_one({"email": email}):
+            signup_status = [False, "Email already in use."]
         else:
             try:
                 users.insert_one(
@@ -52,7 +53,7 @@ def signup():
         if signup_status[0]:
             return redirect(url_for("signin"))
 
-    return render_template("signup.html")
+    return render_template("signup.html", signup_status=signup_status)
 
 
 @app.route("/signin/", methods=["GET", "POST"])
@@ -151,7 +152,7 @@ def sent():
 
 @app.route("/@")
 def a_a():
-    return "@_@<br>There is nothing here, go away."
+    return render_template("toastr.html")
 
 
 if __name__ == "__main__":

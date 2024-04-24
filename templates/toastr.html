@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>toastr</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{url_for('static', filename='toastr/toastr.css')}}">
+    <script src="{{url_for('static', filename='toastr/toastr.js')}}"></script>
+</head>
+
+<body>
+    <script>
+        toastr["success"]("Are you the six fingered man?")
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-left",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "30",
+            "hideDuration": "100",
+            "timeOut": "500",
+            "extendedTimeOut": "100",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+    </script>
+</body>
+
+</html>
