@@ -1,10 +1,10 @@
 from tag_maker import p_lightred
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, session
 from pymongo import MongoClient
 from logging import getLogger, ERROR
 from os import urandom
 
-# TODO: make a "response" variable and remove other "return"s in each function
+# TODO: make a "response" variable and remove other "return"s in each function; signin to index message
 
 app = Flask(__name__)
 app.secret_key = urandom(24)
@@ -35,7 +35,7 @@ def signup():
         return redirect(url_for("index"))
 
     signup_flag = True
-    signup_message = page_name
+    message = page_name
 
     if request.method == "POST":
         username = request.form.get("username")
@@ -44,36 +44,50 @@ def signup():
 
         signup_flag = False
         if not (username and password):
-            signup_message = "Username, Password and Email are required."
+            message = "Username, Password and Email are required"
         elif users.find_one({"username": username}):
-            signup_message = "Username already taken."
+            message = "Username already taken"
         elif users.find_one({"email": email}):
-            signup_message = "Email already in use."
+            message = "Email already in use"
         else:
             try:
                 users.insert_one(
                     {"username": username, "password": password, "email": email}
                 )
                 signup_flag = True
-                signup_message = username
+                message = username
             except Exception as error:
-                signup_message = type(error).__name__
+                message = type(error).__name__
 
         if signup_flag:
+            session["signup_to_signin"] = True
             return redirect(url_for("signin"))
+
+    header_bg = ""
+    if not signup_flag:
+        header_bg = "error-bg"
+
+    js = not signup_flag
 
     return render_template(
         "signup.html",
+        js=js,
+        message=message,
+        header_bg=header_bg,
         page_name=page_name,
-        signup_flag=signup_flag,
-        signup_message=signup_message,
     )
 
 
 @app.route("/signin/", methods=["GET", "POST"])
 def signin():
+    page_name = "Signin"
+
     if request.cookies.get("username"):
         return redirect(url_for("index"))
+
+    message = page_name
+    js = False
+    header_bg = ""
 
     if request.method == "POST":
         username = request.form.get("username")
@@ -81,11 +95,28 @@ def signin():
         user = users.find_one({"username": username})
 
         if user and (user["password"] == password):
+            session["signin_to_index"] = True
             response = redirect(url_for("index"))
             response.set_cookie("username", username, max_age=7200)
             return response
 
-    return render_template("signin.html")
+        message = "Invalid credentials"
+        header_bg = "error-bg"
+
+    signup_to_signin = session.pop("signup_to_signin", False)
+
+    if signup_to_signin:
+        message = "Your account created successfully"
+        header_bg = "success-bg"
+        js = True
+
+    return render_template(
+        "signin.html",
+        js=js,
+        message=message,
+        header_bg=header_bg,
+        page_name=page_name,
+    )
 
 
 @app.route("/signout/")

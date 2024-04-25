@@ -11,9 +11,9 @@
 
 <body>
     <div class="head-status">
-        <div id="head-label" class="head-label{% if not signup_flag %} error-bg{% endif %}">
-            {{ signup_message }}
-        </div>        
+        <div id="head-label" class="head-label {{ header_bg }}">
+            {{ message }}
+        </div>
         <div id="head-info" class="head-info">
             <p>
                 <b>
@@ -40,8 +40,7 @@
     <script src="{{ url_for('static', filename='js/cookie.js') }}"></script>
     <script src="{{ url_for('static', filename='js/notif.js') }}"></script>
     <script>
-        if ("{{ not signup_flag }}") {
-            var username = "{{ username }}";
+        if ("{{ js }}") {
             var page_name = "{{ page_name }}";
             var head_label = document.getElementById("head-label");
             setTimeout(function () {

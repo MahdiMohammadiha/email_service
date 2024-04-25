@@ -34,7 +34,7 @@ body {
 
 .head-label {
     display: flex;
-    flex: 3;
+    flex: 4;
     flex-direction: row;
     background-color: white;
     padding: 10px;
@@ -47,7 +47,7 @@ body {
 
 .head-info {
     display: flex;
-    flex: 7;
+    flex: 6;
     flex-direction: row;
     background-color: white;
     padding: 10px;
