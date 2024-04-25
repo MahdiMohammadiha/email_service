@@ -7,18 +7,13 @@
     <title>Signup</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/window.css')}}">
-    <script src="{{url_for('static', filename='js/cookie.js')}}"></script>
 </head>
 
 <body>
     <div class="head-status">
-        <div class="head-label">
-            <p>
-                <b>
-                    Signup
-                </b>
-            </p>
-        </div>
+        <div id="head-label" class="head-label{% if not signup_flag %} error-bg{% endif %}">
+            {{ signup_message }}
+        </div>        
         <div id="head-info" class="head-info">
             <p>
                 <b>
@@ -42,6 +37,18 @@
             <button type="submit">Signup</button>
         </form>
     </div>
+    <script src="{{ url_for('static', filename='js/cookie.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/notif.js') }}"></script>
+    <script>
+        if ("{{ not signup_flag }}") {
+            var username = "{{ username }}";
+            var page_name = "{{ page_name }}";
+            var head_label = document.getElementById("head-label");
+            setTimeout(function () {
+                setPageName(head_label, page_name);
+            }, 5000);
+        };
+    </script>
 </body>
 
 </html>

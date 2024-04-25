@@ -7,18 +7,11 @@
     <title>Sent</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/window.css')}}">
-    <script src="{{url_for('static', filename='js/cookie.js')}}"></script>
 </head>
 
 <body>
     <div class="head-status">
-        <div class="head-label">
-            <p>
-                <b>
-                    Sent
-                </b>
-            </p>
-        </div>
+        <div id="head-label" class="head-label"></div>
         <div id="head-info" class="head-info">
             <p>
                 <b>
@@ -51,6 +44,14 @@
             {% endfor %}
         </table>
     </div>
+    <script src="{{ url_for('static', filename='js/cookie.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/notif.js') }}"></script>
+    <script>
+        var username = "{{ username }}";
+        var page_name = "Sent";
+        var head_label = document.getElementById("head-label");
+        setPageName(head_label, page_name);
+    </script>
 </body>
 
 </html>

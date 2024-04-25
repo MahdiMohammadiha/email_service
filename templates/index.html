@@ -5,20 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Index</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/window.css')}}">
-    <script src="{{url_for('static', filename='js/cookie.js')}}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/window.css') }}">
 </head>
 
 <body>
     <div class="head-status">
-        <div class="head-label">
-            <p>
-                <b>
-                    Index
-                </b>
-            </p>
-        </div>
+        <div id="head-label" class="head-label"></div>
         <div id="head-info" class="head-info">
             <p>
                 <b>
@@ -39,6 +32,14 @@
         </p>
         <hr>
     </div>
+    <script src="{{ url_for('static', filename='js/cookie.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/notif.js') }}"></script>
+    <script>
+        var username = "{{ username }}";
+        var page_name = "Index";
+        var head_label = document.getElementById("head-label");
+        setPageName(head_label, page_name);
+    </script>
 </body>
 
 </html>

@@ -1,17 +1,21 @@
+from tag_maker import p_lightred
 from flask import Flask, render_template, url_for, request, redirect
 from pymongo import MongoClient
 from logging import getLogger, ERROR
 from os import urandom
 
+# TODO: make a "response" variable and remove other "return"s in each function
+
 app = Flask(__name__)
 app.secret_key = urandom(24)
 
 log = getLogger("werkzeug")
-log.setLevel(ERROR)
+# log.setLevel(ERROR)
 
 client = MongoClient("localhost", 27017)
 db = client.email_service
 users = db.users
+emails = db.emails
 
 
 @app.route("/")
@@ -25,35 +29,45 @@ def index():
 
 @app.route("/signup/", methods=["GET", "POST"])
 def signup():
+    page_name = "Signup"
+
     if request.cookies.get("username"):
         return redirect(url_for("index"))
 
-    signup_status = [False, "Not proceed."]
+    signup_flag = True
+    signup_message = page_name
 
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        email = request.form["email"]
+        username = request.form.get("username")
+        password = request.form.get("password")
+        email = request.form.get("email")
 
+        signup_flag = False
         if not (username and password):
-            signup_status = [False, "Both Username, Password and Email are required."]
+            signup_message = "Username, Password and Email are required."
         elif users.find_one({"username": username}):
-            signup_status = [False, "Username already taken."]
+            signup_message = "Username already taken."
         elif users.find_one({"email": email}):
-            signup_status = [False, "Email already in use."]
+            signup_message = "Email already in use."
         else:
             try:
                 users.insert_one(
                     {"username": username, "password": password, "email": email}
                 )
-                signup_status = [True, username]
+                signup_flag = True
+                signup_message = username
             except Exception as error:
-                signup_status = [False, type(error).__name__]
+                signup_message = type(error).__name__
 
-        if signup_status[0]:
+        if signup_flag:
             return redirect(url_for("signin"))
 
-    return render_template("signup.html", signup_status=signup_status)
+    return render_template(
+        "signup.html",
+        page_name=page_name,
+        signup_flag=signup_flag,
+        signup_message=signup_message,
+    )
 
 
 @app.route("/signin/", methods=["GET", "POST"])
@@ -62,8 +76,8 @@ def signin():
         return redirect(url_for("index"))
 
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+        username = request.form.get("username")
+        password = request.form.get("password")
         user = users.find_one({"username": username})
 
         if user and (user["password"] == password):
@@ -150,8 +164,8 @@ def sent():
     return render_template("sent.html", username=username, data=data)
 
 
-@app.route("/@")
-def a_a():
+@app.route("/toastr")
+def toastr():
     return render_template("toastr.html")
 
 

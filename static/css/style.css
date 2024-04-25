@@ -1,6 +1,7 @@
 * {
     margin: 0px;
     padding: 0px;
+    box-sizing: border-box;
 }
 
 body {
@@ -10,7 +11,8 @@ body {
     align-items: center;
 }
 
-.content, .head-links {
+.content,
+.head-links {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -62,4 +64,20 @@ body {
 .head-links {
     flex-direction: row;
     justify-content: space-around;
+}
+
+.success-bg {
+    background-color: #d4edda;
+}
+
+.info-bg {
+    background-color: #d1ecf1;
+}
+
+.warning-bg {
+    background-color: #fff3cd;
+}
+
+.error-bg {
+    background-color: #f8d7da;
 }
