@@ -16,4 +16,4 @@ Create a directory and run the following commands:
 
 - `flask run`
 
-**You should have Python 3, pip, and venv installed on your system.**
+**You need to have Python3, pip, venv and MongoDB service installed on your system.**
