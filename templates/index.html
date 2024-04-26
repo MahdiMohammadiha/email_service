@@ -11,7 +11,9 @@
 
 <body>
     <div class="head-status">
-        <div id="head-label" class="head-label"></div>
+        <div id="head-label" class="head-label {{ header_bg }}">
+            {{ message }}
+        </div>
         <div id="head-info" class="head-info">
             <p>
                 <b>
@@ -35,10 +37,13 @@
     <script src="{{ url_for('static', filename='js/cookie.js') }}"></script>
     <script src="{{ url_for('static', filename='js/notif.js') }}"></script>
     <script>
-        var username = "{{ username }}";
-        var page_name = "Index";
-        var head_label = document.getElementById("head-label");
-        setPageName(head_label, page_name);
+        if ("{{ js }}") {
+            var page_name = "{{ page_name }}";
+            var head_label = document.getElementById("head-label");
+            setTimeout(function () {
+                setPageName(head_label, page_name);
+            }, 5000);
+        };
     </script>
 </body>
 

@@ -20,11 +20,36 @@ emails = db.emails
 
 @app.route("/")
 def index():
+    page_name = "Index"
+
     username = request.cookies.get("username")
     if not username:
         username = "Guest"
 
-    return render_template("index.html", username=username)
+    js = False
+    message = page_name
+    header_bg = ""
+
+    signin_to_index = session.pop("signin_to_index", False)
+    if signin_to_index:
+        js = True
+        header_bg = "success-bg"
+        message = "Signin successful"
+
+    signout_to_index = session.pop("signout_to_index", False)
+    if signout_to_index:
+        js = True
+        header_bg = "success-bg"
+        message = "Signout successful"
+
+    return render_template(
+        "index.html",
+        js=js,
+        message=message,
+        header_bg=header_bg,
+        page_name=page_name,
+        username=username,
+    )
 
 
 @app.route("/signup/", methods=["GET", "POST"])
@@ -85,9 +110,9 @@ def signin():
     if request.cookies.get("username"):
         return redirect(url_for("index"))
 
-    message = page_name
     js = False
     header_bg = ""
+    message = page_name
 
     if request.method == "POST":
         username = request.form.get("username")
@@ -106,9 +131,9 @@ def signin():
     signup_to_signin = session.pop("signup_to_signin", False)
 
     if signup_to_signin:
-        message = "Your account created successfully"
-        header_bg = "success-bg"
         js = True
+        header_bg = "success-bg"
+        message = "Your account created successfully"
 
     return render_template(
         "signin.html",
@@ -124,6 +149,7 @@ def signout():
     if not request.cookies.get("username"):
         return redirect(url_for("index"))
 
+    session["signout_to_index"] = True
     response = redirect(url_for("index"))
     response.set_cookie("username", "", expires=0)
     return response
