@@ -31,7 +31,8 @@ table {
     width: 100%;
 }
 
-th, td {
+th,
+td {
     border: 1px solid gray;
     text-align: left;
     padding: 10px;

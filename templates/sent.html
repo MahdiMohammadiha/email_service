@@ -38,8 +38,14 @@
             {% endfor %}
         </table>
         <div class="pagination">
-            <button class="previous-page">Previous</button>
-            <button class="next-page">Next</button>
+            {% set prev_page = page_number - 1 %}
+            {% set next_page = page_number + 1 %}
+            {% if prev_page > 0 %}
+            <a id="prev-page" href="{{ url_for('sent', page=prev_page) }}">Previous page</a>
+            {% endif %}
+            {% if there_is_next_page %}
+            <a id="next-page" href="{{ url_for('sent', page=next_page) }}">Next page</a>
+            {% endif %}
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/cookie.js') }}"></script>

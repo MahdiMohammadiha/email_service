@@ -15,14 +15,14 @@ app = Flask(__name__)
 app.secret_key = urandom(24)
 
 log = getLogger("werkzeug")
-# log.setLevel(ERROR)
+log.setLevel(ERROR)
 
 client = MongoClient("localhost", 27017)
 db = client.email_service
 users = db.users
 emails = db.emails
 
-PAGE_SIZE = 20
+PAGE_SIZE = 10
 
 
 @app.route("/")
@@ -250,10 +250,7 @@ def inbox():
         received_emails_list.append(email_data)
 
     data = received_emails_list
-
-    there_is_next_page = True
-    if not data:
-        there_is_next_page = False
+    there_is_next_page = len(data) == PAGE_SIZE
 
     return render_template(
         "inbox.html",
@@ -287,9 +284,18 @@ def sent():
         header_bg = "success-bg"
         message = "Email sent"
 
+    page_number = request.args.get("page", 1)
+    if not page_number:
+        page_number = 1
+    page_number = int(page_number)
+    skip = (page_number - 1) * PAGE_SIZE
+
     pipeline = [
         {"$match": {"from": username}},
         {"$project": {"to": 1, "date": 1, "time": 1, "subject": 1, "body": 1}},
+        {"$sort": {"date": -1, "time": -1}},
+        {"$skip": skip},
+        {"$limit": PAGE_SIZE},
     ]
     sent_emails = emails.aggregate(pipeline)
 
@@ -305,6 +311,7 @@ def sent():
         sent_email_list.append(email_data)
 
     data = sent_email_list
+    there_is_next_page = len(data) == PAGE_SIZE
 
     return render_template(
         "sent.html",
@@ -314,6 +321,8 @@ def sent():
         page_name=page_name,
         username=username,
         data=data,
+        page_number=page_number,
+        there_is_next_page=there_is_next_page,
     )
 
 
