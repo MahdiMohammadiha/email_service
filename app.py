@@ -129,11 +129,16 @@ def signin():
         header_bg = "error-bg"
 
     signup_to_signin = session.pop("signup_to_signin", False)
-
     if signup_to_signin:
         js = True
         header_bg = "success-bg"
         message = "Your account created successfully"
+
+    signout_to_signin = session.pop("signout_to_signin", False)
+    if signout_to_signin:
+        js = True
+        header_bg = "warning-bg"
+        message = "You need to signin here first"
 
     return render_template(
         "signin.html",
@@ -147,7 +152,8 @@ def signin():
 @app.route("/signout/")
 def signout():
     if not request.cookies.get("username"):
-        return redirect(url_for("index"))
+        session["signout_to_signin"] = True
+        return redirect(url_for("signin"))
 
     session["signout_to_index"] = True
     response = redirect(url_for("index"))
@@ -157,9 +163,15 @@ def signout():
 
 @app.route("/inbox/")
 def inbox():
+    page_name = "Inbox"
+
     username = request.cookies.get("username")
     if not username:
         return redirect(url_for("signin"))
+
+    js = False
+    header_bg = ""
+    message = page_name
 
     data = [
         {
@@ -185,7 +197,15 @@ def inbox():
         },
     ]
 
-    return render_template("inbox.html", username=username, data=data)
+    return render_template(
+        "inbox.html",
+        js=js,
+        message=message,
+        header_bg=header_bg,
+        page_name=page_name,
+        username=username,
+        data=data,
+    )
 
 
 @app.route("/sent/")
@@ -193,6 +213,10 @@ def sent():
     username = request.cookies.get("username")
     if not username:
         return redirect(url_for("signin"))
+
+    js = False
+    header_bg = ""
+    message = page_name
 
     data = [
         {
@@ -218,7 +242,15 @@ def sent():
         },
     ]
 
-    return render_template("sent.html", username=username, data=data)
+    return render_template(
+        "sent.html",
+        js=js,
+        message=message,
+        header_bg=header_bg,
+        page_name=page_name,
+        username=username,
+        data=data,
+    )
 
 
 @app.route("/toastr")
