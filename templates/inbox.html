@@ -25,6 +25,7 @@
                 <th>From</th>
                 <th>Subject</th>
                 <th class="table-date">Date</th>
+                <th class="table-time">Time</th>
                 <th>Body</th>
             </tr>
             {% for row in data %}
@@ -33,6 +34,7 @@
                 <td>{{ row.from }}</td>
                 <td>{{ row.subject }}</td>
                 <td class="table-date">{{ row.date }}</td>
+                <td class="table-time">{{ row.time }}</td>
                 <td>{{ row.body }}</td>
             </tr>
             {% endfor %}

@@ -31,20 +31,13 @@ table {
     width: 100%;
 }
 
+
 th,
 td {
     border: 1px solid gray;
     text-align: left;
     padding: 10px;
     word-wrap: break-word;
-}
-
-.table-index {
-    max-width: 30px;
-}
-
-.table-date {
-    max-width: 40px;
 }
 
 tr:nth-child(odd) {
@@ -152,4 +145,52 @@ a:hover {
 
 .pagination a {
     min-width: 150px;
+}
+
+form {
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid gray;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+button[type="submit"] {
+    width: 100%;
+    background-color: gray;
+    color: white;
+    padding: 10px 0;
+    margin: 10px 0 0;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: lightgray;
+    color: black;
+}
+
+.table-index {
+    max-width: 25px;
+}
+
+.table-date {
+    max-width: 35px;
+}
+
+.table-time {
+    max-width: 35px;
 }
