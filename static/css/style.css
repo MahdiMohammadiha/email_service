@@ -141,3 +141,14 @@ a:hover {
     color: black;
     background-color: lightgray;
 }
+
+.pagination {
+    width: 100%;
+    display: flex;
+    margin-top: 15px;
+    justify-content: space-between;
+}
+
+.pagination a {
+    min-width: 150px;
+}

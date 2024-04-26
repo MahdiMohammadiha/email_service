@@ -22,6 +22,8 @@ db = client.email_service
 users = db.users
 emails = db.emails
 
+PAGE_SIZE = 20
+
 
 @app.route("/")
 def index():
@@ -32,8 +34,8 @@ def index():
         username = "Guest"
 
     js = False
-    message = page_name
     header_bg = ""
+    message = page_name
 
     signin_to_index = session.pop("signin_to_index", False)
     if signin_to_index:
@@ -221,9 +223,18 @@ def inbox():
     header_bg = ""
     message = page_name
 
+    page_number = request.args.get("page", 1)
+    if not page_number:
+        page_number = 1
+    page_number = int(page_number)
+    skip = (page_number - 1) * PAGE_SIZE
+
     pipeline = [
         {"$match": {"to": username}},
         {"$project": {"from": 1, "date": 1, "time": 1, "subject": 1, "body": 1}},
+        {"$sort": {"date": -1, "time": -1}},
+        {"$skip": skip},
+        {"$limit": PAGE_SIZE},
     ]
     received_emails = emails.aggregate(pipeline)
 
@@ -240,6 +251,10 @@ def inbox():
 
     data = received_emails_list
 
+    there_is_next_page = True
+    if not data:
+        there_is_next_page = False
+
     return render_template(
         "inbox.html",
         js=js,
@@ -248,6 +263,8 @@ def inbox():
         page_name=page_name,
         username=username,
         data=data,
+        page_number=page_number,
+        there_is_next_page=there_is_next_page,
     )
 
 
