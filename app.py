@@ -3,8 +3,13 @@ from flask import Flask, render_template, url_for, request, redirect, session
 from pymongo import MongoClient
 from logging import getLogger, ERROR
 from os import urandom
+from datetime import datetime
 
-# TODO: make a "response" variable and remove other "return"s in each function; signin to index message
+"""
+TODO: 
+    1. make a "response" variable and remove other "return"s in each function
+    2. manage js variable with header_bg -- if header_bg => js = True
+"""
 
 app = Flask(__name__)
 app.secret_key = urandom(24)
@@ -61,6 +66,7 @@ def signup():
 
     signup_flag = True
     message = page_name
+    header_bg = ""
 
     if request.method == "POST":
         username = request.form.get("username")
@@ -68,7 +74,7 @@ def signup():
         email = request.form.get("email")
 
         signup_flag = False
-        if not (username and password):
+        if not (username and password and email):
             message = "Username, Password and Email are required"
         elif users.find_one({"username": username}):
             message = "Username already taken"
@@ -77,7 +83,11 @@ def signup():
         else:
             try:
                 users.insert_one(
-                    {"username": username, "password": password, "email": email}
+                    {
+                        "username": username,
+                        "password": password,
+                        "email": email,
+                    }
                 )
                 signup_flag = True
                 message = username
@@ -88,7 +98,6 @@ def signup():
             session["signup_to_signin"] = True
             return redirect(url_for("signin"))
 
-    header_bg = ""
     if not signup_flag:
         header_bg = "error-bg"
 
@@ -135,7 +144,10 @@ def signin():
         message = "Your account created successfully"
 
     signout_to_signin = session.pop("signout_to_signin", False)
-    if signout_to_signin:
+    send_to_signin = session.pop("send_to_signin", False)
+    sent_to_signin = session.pop("sent_to_signin", False)
+    inbox_to_signin = session.pop("inbox_to_signin", False)
+    if signout_to_signin or send_to_signin or sent_to_signin or inbox_to_signin:
         js = True
         header_bg = "warning-bg"
         message = "You need to signin here first"
@@ -167,35 +179,26 @@ def inbox():
 
     username = request.cookies.get("username")
     if not username:
+        session["inbox_to_signin"] = True
         return redirect(url_for("signin"))
 
     js = False
     header_bg = ""
     message = page_name
 
-    data = [
-        {
-            "index": 1,
-            "from": "john@example.com",
-            "subject": "Meeting Reminder",
-            "date": "2024-04-20",
-            "body": "Don't forget about our meeting tomorrow.",
-        },
-        {
-            "index": 2,
-            "from": "alice@example.com",
-            "subject": "Project Update",
-            "date": "2024-04-21",
-            "body": "Here's the latest progress on our project.",
-        },
-        {
-            "index": 3,
-            "from": "bob@example.com",
-            "subject": "Important Announcement",
-            "date": "2024-04-22",
-            "body": "Please read this important announcement carefully.",
-        },
-    ]
+    received_emails = emails.find({"to": username})
+    received_emails_list = []
+    for email in received_emails:
+        email_data = {
+            "from": email["from"],
+            "date": email["date"],
+            "time": email["time"],
+            "subject": email["subject"],
+            "body": email["body"],
+        }
+        received_emails_list.append(email_data)
+
+    data = received_emails_list
 
     return render_template(
         "inbox.html",
@@ -210,37 +213,36 @@ def inbox():
 
 @app.route("/sent/")
 def sent():
+    page_name = "Sent"
+
     username = request.cookies.get("username")
     if not username:
+        session["sent_to_signin"] = True
         return redirect(url_for("signin"))
 
     js = False
     header_bg = ""
     message = page_name
 
-    data = [
-        {
-            "index": 1,
-            "to": "client1@example.com",
-            "subject": "Meeting Confirmation",
-            "date": "2024-04-20",
-            "body": "Confirming our meeting scheduled for next week.",
-        },
-        {
-            "index": 2,
-            "to": "client2@example.com",
-            "subject": "Project Update",
-            "date": "2024-04-21",
-            "body": "Here's the latest update on the project.",
-        },
-        {
-            "index": 3,
-            "to": "client3@example.com",
-            "subject": "Invoice Attached",
-            "date": "2024-04-22",
-            "body": "Please find attached the invoice for the services rendered.",
-        },
-    ]
+    send_to_sent = session.pop("send_to_sent", False)
+    if send_to_sent:
+        js = True
+        header_bg = "success-bg"
+        message = "Email sent"
+
+    sent_emails = emails.find({"from": username})
+    sent_email_list = []
+    for email in sent_emails:
+        email_data = {
+            "to": email["to"],
+            "date": email["date"],
+            "time": email["time"],
+            "subject": email["subject"],
+            "body": email["body"],
+        }
+        sent_email_list.append(email_data)
+
+    data = sent_email_list
 
     return render_template(
         "sent.html",
@@ -250,6 +252,60 @@ def sent():
         page_name=page_name,
         username=username,
         data=data,
+    )
+
+
+@app.route("/send/", methods=["GET", "POST"])
+def send():
+    page_name = "Send"
+
+    username = request.cookies.get("username")
+    if not username:
+        session["send_to_signin"] = True
+        return redirect(url_for("signin"))
+
+    js = False
+    header_bg = ""
+    message = page_name
+
+    if request.method == "POST":
+        to = request.form.get("to")
+        subject = request.form.get("subject")
+        body = request.form.get("body")
+
+        if not (to and subject and body):
+            header_bg = "error-bg"
+            message = "Username, Subject and Body are required"
+        else:
+            error_in_insertion = False
+            if users.find_one({"email": to}):
+                try:
+                    emails.insert_one(
+                        {
+                            "from": username,
+                            "to": to,
+                            "date": datetime.now().strftime("%Y-%m-%d"),
+                            "time": datetime.now().strftime("%H:%M:%S"),
+                            "subject": subject,
+                            "body": body,
+                        }
+                    )
+                except Exception as error:
+                    header_bg = "error-bg"
+                    message = type(error).__name__
+                    error_in_insertion = True
+
+            if not error_in_insertion:
+                session["send_to_sent"] = True
+                return redirect(url_for("sent"))
+
+    return render_template(
+        "send.html",
+        js=js,
+        message=message,
+        header_bg=header_bg,
+        page_name=page_name,
+        username=username,
     )
 
 

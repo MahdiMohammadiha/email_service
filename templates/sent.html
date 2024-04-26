@@ -35,7 +35,7 @@
             </tr>
             {% for row in data %}
             <tr>
-                <td>{{ row.index }}</td>
+                <td>{{ loop.index }}</td>
                 <td>{{ row.to }}</td>
                 <td>{{ row.subject }}</td>
                 <td>{{ row.date }}</td>
@@ -47,10 +47,13 @@
     <script src="{{ url_for('static', filename='js/cookie.js') }}"></script>
     <script src="{{ url_for('static', filename='js/notif.js') }}"></script>
     <script>
-        var username = "{{ username }}";
-        var page_name = "Sent";
-        var head_label = document.getElementById("head-label");
-        setPageName(head_label, page_name);
+        if ("{{ js }}") {
+            var page_name = "{{ page_name }}";
+            var head_label = document.getElementById("head-label");
+            setTimeout(function () {
+                setPageName(head_label, page_name);
+            }, 5000);
+        };
     </script>
 </body>
 

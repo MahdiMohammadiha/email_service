@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inbox</title>
+    <title>Send</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/window.css')}}">
 </head>
@@ -23,26 +23,20 @@
     {% include "links.html" %}
     <div class="content">
         <h3>
-            Your emails:
+            Send email:
         </h3>
-        <table>
-            <tr>
-                <th>Index</th>
-                <th>From</th>
-                <th>Subject</th>
-                <th>Date</th>
-                <th>Body</th>
-            </tr>
-            {% for row in data %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ row.from }}</td>
-                <td>{{ row.subject }}</td>
-                <td>{{ row.date }}</td>
-                <td>{{ row.body }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+        <form method="post">
+            <p>
+                <input type="text" name="to" id="to" placeholder="To">
+            </p>
+            <p>
+                <input type="text" name="subject" id="subject" placeholder="Subject">
+            </p>
+            <p>
+                <input type="text" name="body" id="body" placeholder="Body">
+            </p>
+            <button type="submit">Send</button>
+        </form>
     </div>
     <script src="{{ url_for('static', filename='js/cookie.js') }}"></script>
     <script src="{{ url_for('static', filename='js/notif.js') }}"></script>
