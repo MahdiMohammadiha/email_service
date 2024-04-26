@@ -2,6 +2,7 @@
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
+    transition: all 0.4s ease;
 }
 
 body {
@@ -11,6 +12,49 @@ body {
     align-items: center;
 }
 
+p {
+    margin: 5px 0px;
+    line-height: 1.5;
+}
+
+hr {
+    margin: 10px 0px;
+}
+
+li {
+    margin-left: 30px;
+}
+
+table {
+    margin-top: 5px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid gray;
+    text-align: left;
+    padding: 10px;
+    word-wrap: break-word;
+}
+
+.table-index {
+    max-width: 30px;
+}
+
+.table-date {
+    max-width: 40px;
+}
+
+tr:nth-child(odd) {
+    background-color: lightgray;
+}
+
+th {
+    background-color: gray;
+    color: white;
+}
+
 .content,
 .head-links {
     display: flex;
@@ -18,7 +62,7 @@ body {
     flex: 1;
     background-color: white;
     width: 70%;
-    padding: 10px;
+    padding: 5px 15px;
     box-shadow: 0px 0px 10px gray;
     border-radius: 5px;
     margin-top: 10px;
@@ -37,7 +81,7 @@ body {
     flex: 4;
     flex-direction: row;
     background-color: white;
-    padding: 10px;
+    padding: 15px;
     margin: -10px 0px -10px -10px;
     box-shadow: 0px 0px 10px gray;
     border-radius: 5px;
@@ -50,7 +94,7 @@ body {
     flex: 6;
     flex-direction: row;
     background-color: white;
-    padding: 10px;
+    padding: 15px;
     margin: -10px -10px -10px 0px;
     box-shadow: 0px 0px 10px gray;
     border-radius: 5px;
@@ -80,4 +124,20 @@ body {
 
 .error-bg {
     background-color: #f8d7da;
+}
+
+a {
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    background-color: gray;
+    min-width: 100px;
+    margin: 5px 0px;
+    padding: 5px 20px;
+    border-radius: 5px;
+}
+
+a:hover {
+    color: black;
+    background-color: lightgray;
 }

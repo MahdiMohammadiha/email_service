@@ -1,28 +1,14 @@
 {% block links %}
 <div class="head-links">
-    <p>
-        <a href="/">Index</a>
-    </p>
+    <a href="/">Index</a>
     {% if request.cookies.get("username") %}
-    <p>
-        <a href="/send">Send</a>
-    </p>
-    <p>
-        <a href="/inbox">Inbox</a>
-    </p>
-    <p>
-        <a href="/sent">Sent</a>
-    </p>
-    <p>
-        <a href="/signout">Signout</a>
-    </p>
+    <a href="/send">Send</a>
+    <a href="/inbox">Inbox</a>
+    <a href="/sent">Sent</a>
+    <a href="/signout">Signout</a>
     {% else %}
-    <p>
-        <a href="/signup">Signup</a>
-    </p>
-    <p>
-        <a href="/signin">Signin</a>
-    </p>
+    <a href="/signup">Signup</a>
+    <a href="/signin">Signin</a>
     {% endif %}
 </div>
 {% endblock %}

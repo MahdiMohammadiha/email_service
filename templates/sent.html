@@ -12,13 +12,7 @@
 <body>
     <div class="head-status">
         {% include "notif.html" %}
-        <div id="head-info" class="head-info">
-            <p>
-                <b>
-                    Hello {{ username }}
-                </b>
-            </p>
-        </div>
+        {% include "info.html" %}
     </div>
     {% include "links.html" %}
     <div class="content">
@@ -27,18 +21,18 @@
         </h3>
         <table>
             <tr>
-                <th>Index</th>
+                <th class="table-index">Index</th>
                 <th>To</th>
                 <th>Subject</th>
-                <th>Date</th>
+                <th class="table-date">Date</th>
                 <th>Body</th>
             </tr>
             {% for row in data %}
             <tr>
-                <td>{{ loop.index }}</td>
+                <td class="table-index">{{ loop.index }}</td>
                 <td>{{ row.to }}</td>
                 <td>{{ row.subject }}</td>
-                <td>{{ row.date }}</td>
+                <td class="table-date">{{ row.date }}</td>
                 <td>{{ row.body }}</td>
             </tr>
             {% endfor %}
@@ -52,7 +46,7 @@
             var head_label = document.getElementById("head-label");
             setTimeout(function () {
                 setPageName(head_label, page_name);
-            }, 5000);
+            }, 4000);
         };
     </script>
 </body>

@@ -12,13 +12,7 @@
 <body>
     <div class="head-status">
         {% include "notif.html" %}
-        <div id="head-info" class="head-info">
-            <p>
-                <b>
-                    Hello {{ username }}
-                </b>
-            </p>
-        </div>
+        {% include "info.html" %}
     </div>
     {% include "links.html" %}
     <div class="content">
@@ -46,7 +40,7 @@
             var head_label = document.getElementById("head-label");
             setTimeout(function () {
                 setPageName(head_label, page_name);
-            }, 5000);
+            }, 4000);
         };
     </script>
 </body>

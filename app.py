@@ -291,9 +291,15 @@ def send():
                         }
                     )
                 except Exception as error:
+                    js = True
                     header_bg = "error-bg"
                     message = type(error).__name__
                     error_in_insertion = True
+            else:
+                js = True
+                header_bg = "error-bg"
+                message = "Email does not exist"
+                error_in_insertion = True
 
             if not error_in_insertion:
                 session["send_to_sent"] = True

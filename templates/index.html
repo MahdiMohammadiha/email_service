@@ -12,13 +12,7 @@
 <body>
     <div class="head-status">
         {% include "notif.html" %}
-        <div id="head-info" class="head-info">
-            <p>
-                <b>
-                    Hello {{ username }}
-                </b>
-            </p>
-        </div>
+        {% include "info.html" %}
     </div>
     {% include "links.html" %}
     <div class="content">
@@ -31,6 +25,90 @@
             point for larger projects.
         </p>
         <hr>
+        <h2>
+            README
+        </h2>
+        <h3>
+            Welcome to Our Email Service
+        </h3>
+        <p>
+            Our email service is a simple and efficient platform designed to help you manage your email communication
+            effectively. Below is a quick guide to get you started:
+        </p>
+        <ol>
+            <li>
+                <p>
+                    <b>
+                        Signup:
+                    </b>
+                    If you're new here, start by signing up for an account. Click on the <a href="/signup/">Signup</a> link and fill in the
+                    required information, including your desired username, password, and email address. Once you've
+                    completed the signup process, you'll be redirected to the signin page.
+                </p>
+            </li>
+            <li>
+                <p>
+                    <b>
+                        Signin:
+                    </b>
+                    Simply signin with your username and password in <a href="/signin/">Signin</a>.
+                </p>
+            </li>
+            <li>
+                <p>
+                    <b>
+                        Compose and Send Emails:
+                    </b>
+                    Once you're signed in, you can compose and send emails to your contacts. Click on the <a href="/send/">Send</a> link to
+                    create a new email. Enter the recipient's email address, subject, and the content of your email,
+                    then click <a href="/send/">Send</a>.
+                </p>
+            </li>
+            <li>
+                <p>
+                    <b>
+                        Check Your Inbox:
+                    </b>
+                    Want to see if you've received any new emails? Navigate to the <a href="/inbox/">Inbox</a> section to view all your
+                    incoming emails. You can see the sender's name, the subject of the email, and a preview of the
+                    content.
+                </p>
+            </li>
+            <li>
+                <p>
+                    <b>
+                        View Sent Emails:
+                    </b>
+                    Curious about the emails you've sent? Head over to the <a href="/sent/">Sent</a> section to see a list of all the
+                    emails you've sent. You can review the recipients, subject, and content of each sent email.
+                </p>
+            </li>
+            <li>
+                <p>
+                    <b>
+                        Signout:
+                    </b>
+                    Finished using our email service? Don't forget to sign out of your account to ensure the security of
+                    your information. Click on the <a href="/signout/">Signout</a> link to log out of your account.
+                </p>
+            </li>
+        </ol>
+        <p>
+            That's it! You're all set to start using our email service. If you have any questions or need further
+            assistance, don't hesitate to reach out to our support team in link below. Happy emailing!
+        </p>
+        <p>
+            <a
+                href="https://mail.google.com/mail/?view=cm&source=mailto&to=mahdi.mohamadiha.znu@gmail.com&su=Ticket%20from%20email%20service">
+                Gmail
+            </a>
+        </p>
+        <p>
+            Project source code:
+            <a href="https://github.com/Mahdi-Mohamadiha/email_service">
+                Github
+            </a>
+        </p>
     </div>
     <script src="{{ url_for('static', filename='js/cookie.js') }}"></script>
     <script src="{{ url_for('static', filename='js/notif.js') }}"></script>
@@ -40,7 +118,7 @@
             var head_label = document.getElementById("head-label");
             setTimeout(function () {
                 setPageName(head_label, page_name);
-            }, 5000);
+            }, 4000);
         };
     </script>
 </body>
