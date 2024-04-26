@@ -73,12 +73,42 @@ def signup():
         password = request.form.get("password")
         email = request.form.get("email")
 
+        pipeline = [
+            {"$match": {"username": username}},
+            {
+                "$lookup": {
+                    "from": "users",
+                    "localField": "username",
+                    "foreignField": "username",
+                    "as": "user",
+                }
+            },
+            {"$unwind": "$user"},
+            {"$count": "count"},
+        ]
+        existing_username_count = list(users.aggregate(pipeline))
+
+        pipeline = [
+            {"$match": {"email": email}},
+            {
+                "$lookup": {
+                    "from": "users",
+                    "localField": "email",
+                    "foreignField": "email",
+                    "as": "user",
+                }
+            },
+            {"$unwind": "$user"},
+            {"$count": "count"},
+        ]
+        existing_email_count = list(users.aggregate(pipeline))
+
         signup_flag = False
         if not (username and password and email):
             message = "Username, Password and Email are required"
-        elif users.find_one({"username": username}):
+        elif existing_username_count and existing_username_count[0]['count'] > 0:
             message = "Username already taken"
-        elif users.find_one({"email": email}):
+        elif existing_email_count and existing_email_count[0]["count"] > 0:
             message = "Email already in use"
         else:
             try:
@@ -126,9 +156,14 @@ def signin():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        user = users.find_one({"username": username})
 
-        if user and (user["password"] == password):
+        pipeline = [
+            {"$match": {"username": username, "password": password}},
+            {"$count": "count"},
+        ]
+        valid_user_count = list(users.aggregate(pipeline))
+
+        if valid_user_count and valid_user_count[0]['count'] > 0:
             session["signin_to_index"] = True
             response = redirect(url_for("index"))
             response.set_cookie("username", username, max_age=7200)
@@ -186,7 +221,12 @@ def inbox():
     header_bg = ""
     message = page_name
 
-    received_emails = emails.find({"to": username})
+    pipeline = [
+        {"$match": {"to": username}},
+        {"$project": {"from": 1, "date": 1, "time": 1, "subject": 1, "body": 1}},
+    ]
+    received_emails = emails.aggregate(pipeline)
+
     received_emails_list = []
     for email in received_emails:
         email_data = {
@@ -230,7 +270,12 @@ def sent():
         header_bg = "success-bg"
         message = "Email sent"
 
-    sent_emails = emails.find({"from": username})
+    pipeline = [
+        {"$match": {"from": username}},
+        {"$project": {"to": 1, "date": 1, "time": 1, "subject": 1, "body": 1}},
+    ]
+    sent_emails = emails.aggregate(pipeline)
+
     sent_email_list = []
     for email in sent_emails:
         email_data = {
