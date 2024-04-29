@@ -108,7 +108,7 @@ def signup():
         signup_flag = False
         if not (username and password and email):
             message = "Username, Password and Email are required"
-        elif existing_username_count and existing_username_count[0]['count'] > 0:
+        elif existing_username_count and existing_username_count[0]["count"] > 0:
             message = "Username already taken"
         elif existing_email_count and existing_email_count[0]["count"] > 0:
             message = "Email already in use"
@@ -165,7 +165,7 @@ def signin():
         ]
         valid_user_count = list(users.aggregate(pipeline))
 
-        if valid_user_count and valid_user_count[0]['count'] > 0:
+        if valid_user_count and valid_user_count[0]["count"] > 0:
             session["signin_to_index"] = True
             response = redirect(url_for("index"))
             response.set_cookie("username", username, max_age=7200)

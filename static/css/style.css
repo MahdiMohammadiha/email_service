@@ -194,3 +194,11 @@ button[type="submit"]:hover {
 .table-time {
     max-width: 35px;
 }
+
+.visible {
+    visibility: visible;
+}
+
+.non-visible {
+    visibility: hidden;
+}
