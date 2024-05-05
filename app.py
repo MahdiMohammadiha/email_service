@@ -1,37 +1,39 @@
-from tag_maker import p_lightred
+from projectAssistant import check_auth, encrypt, decrypt
+from os import urandom
 from flask import Flask, render_template, url_for, request, redirect, session
 from pymongo import MongoClient
 from logging import getLogger, ERROR
-from os import urandom
 from datetime import datetime
 
 """
 TODO: 
     1. make a "response" variable and remove other "return"s in each function
     2. manage js variable with header_bg -- if header_bg => js = True
+    3. save token in db and set a expiration time -- for dinamic token key generation
 """
 
 app = Flask(__name__)
-app.secret_key = urandom(24)
+app.secret_key = "aa7a518cb6084aba3b85c2407e4b90e4e8c33565aaa90137e484710473e9769c"
+# app.secret_key = urandom(32)
 
 log = getLogger("werkzeug")
-log.setLevel(ERROR)
+# log.setLevel(ERROR)
 
 client = MongoClient("localhost", 27017)
 db = client.email_service
 users = db.users
 emails = db.emails
 
-PAGE_SIZE = 10
+PAGE_SIZE = 2
 
 
 @app.route("/")
 def index():
     page_name = "Index"
 
-    username = request.cookies.get("username")
+    username = check_auth("token", app.secret_key)
     if not username:
-        username = "Guest"
+        username = "Gust"
 
     js = False
     header_bg = ""
@@ -63,7 +65,7 @@ def index():
 def signup():
     page_name = "Signup"
 
-    if request.cookies.get("username"):
+    if check_auth("token", app.secret_key):
         return redirect(url_for("index"))
 
     signup_flag = True
@@ -75,42 +77,12 @@ def signup():
         password = request.form.get("password")
         email = request.form.get("email")
 
-        pipeline = [
-            {"$match": {"username": username}},
-            {
-                "$lookup": {
-                    "from": "users",
-                    "localField": "username",
-                    "foreignField": "username",
-                    "as": "user",
-                }
-            },
-            {"$unwind": "$user"},
-            {"$count": "count"},
-        ]
-        existing_username_count = list(users.aggregate(pipeline))
-
-        pipeline = [
-            {"$match": {"email": email}},
-            {
-                "$lookup": {
-                    "from": "users",
-                    "localField": "email",
-                    "foreignField": "email",
-                    "as": "user",
-                }
-            },
-            {"$unwind": "$user"},
-            {"$count": "count"},
-        ]
-        existing_email_count = list(users.aggregate(pipeline))
-
         signup_flag = False
         if not (username and password and email):
             message = "Username, Password and Email are required"
-        elif existing_username_count and existing_username_count[0]["count"] > 0:
+        elif users.find_one({"username": username}):
             message = "Username already taken"
-        elif existing_email_count and existing_email_count[0]["count"] > 0:
+        elif users.find_one({"email": email}):
             message = "Email already in use"
         else:
             try:
@@ -148,7 +120,7 @@ def signup():
 def signin():
     page_name = "Signin"
 
-    if request.cookies.get("username"):
+    if check_auth("token", app.secret_key):
         return redirect(url_for("index"))
 
     js = False
@@ -158,17 +130,13 @@ def signin():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+        user = users.find_one({"username": username})
 
-        pipeline = [
-            {"$match": {"username": username, "password": password}},
-            {"$count": "count"},
-        ]
-        valid_user_count = list(users.aggregate(pipeline))
-
-        if valid_user_count and valid_user_count[0]["count"] > 0:
+        if user and (user["password"] == password):
+            encrypted_username = encrypt(username, app.secret_key)
             session["signin_to_index"] = True
             response = redirect(url_for("index"))
-            response.set_cookie("username", username, max_age=7200)
+            response.set_cookie("token", encrypted_username, max_age=7200)
             return response
 
         message = "Invalid credentials"
@@ -200,13 +168,13 @@ def signin():
 
 @app.route("/signout/")
 def signout():
-    if not request.cookies.get("username"):
+    if not check_auth("token", app.secret_key):
         session["signout_to_signin"] = True
         return redirect(url_for("signin"))
 
     session["signout_to_index"] = True
     response = redirect(url_for("index"))
-    response.set_cookie("username", "", expires=0)
+    response.set_cookie("token", "", expires=0)
     return response
 
 
@@ -214,7 +182,7 @@ def signout():
 def inbox():
     page_name = "Inbox"
 
-    username = request.cookies.get("username")
+    username = check_auth("token", app.secret_key)
     if not username:
         session["inbox_to_signin"] = True
         return redirect(url_for("signin"))
@@ -269,7 +237,7 @@ def inbox():
 def sent():
     page_name = "Sent"
 
-    username = request.cookies.get("username")
+    username = check_auth("token", app.secret_key)
     if not username:
         session["sent_to_signin"] = True
         return redirect(url_for("signin"))
@@ -330,7 +298,7 @@ def sent():
 def send():
     page_name = "Send"
 
-    username = request.cookies.get("username")
+    username = check_auth("token", app.secret_key)
     if not username:
         session["send_to_signin"] = True
         return redirect(url_for("signin"))
