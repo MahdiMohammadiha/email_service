@@ -24,7 +24,7 @@ db = client.email_service
 users = db.users
 emails = db.emails
 
-PAGE_SIZE = 2
+PAGE_SIZE = 10
 
 
 @app.route("/")
